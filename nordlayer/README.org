@@ -1,17 +1,18 @@
 #+TITLE: Nordlayer container
 
-* build and shell
+*   build and shell
 #+begin_src bash
 sudo docker build --rm -t local/nordlayer ./
 sudo docker exec -ti nordlayer /bin/bash
 #+end_src
-
-* run without mounting
+*   run without mounting
 #+begin_src bash
 sudo docker run -d --name=nordlayer local/nordlayer
 #+end_src
 **  result
-runs a container, can't systemd, when privileged can't find
+runs a container, can't access systemd and can't find /run/nordlayer/nordlayer.sock
+
+when privileged can't find systemd
 *   run with partial mounting
 #+begin_src bash
 sudo docker run -ti -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 80:80 local/nordlayer
@@ -37,9 +38,7 @@ Detected virtualization docker.
 
 Detected architecture x86-64.
 
-
 Welcome to CentOS Linux 7 (Core)!
-
 
 Set hostname to <db37c95191a7>.
 

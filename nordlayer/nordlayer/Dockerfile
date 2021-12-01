@@ -17,5 +17,3 @@ RUN systemctl enable nordlayer.service; \
 EXPOSE 80:80
 
 CMD ["/usr/sbin/init"]
-
-
