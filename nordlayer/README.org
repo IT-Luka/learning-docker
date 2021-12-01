@@ -1,4 +1,4 @@
-#+TITLE: Nordlayer Docker container
+#+TITLE: Nordlayer container
 
 #+begin_src bash
 sudo docker build --rm -t local/nordlayer ./
@@ -13,21 +13,22 @@ runs a container, can't systemd, when privileged can't find
 #+begin_src bash
 sudo docker run -ti -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 80:80 local/nordlayer
 #+end_src
-#+RESULTS:
-: Failed to mount tmpfs at /run: Operation not permitted
-: Failed to mount cgroup at /sys/fs/cgroup/systemd: Operation not permitted
-: [!!!!!!] Failed to mount API filesystems, freezing.
+Failed to mount tmpfs at /run: Operation not permitted
+Failed to mount cgroup at /sys/fs/cgroup/systemd: Operation not permitted
+[!!!!!!] Failed to mount API filesystems, freezing.
 
 #+begin_src bash
-sudo docker run -ti -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd:ro -v /tmp/$(mktemp -d):/run -p 80:80 local/nordlayer
+sudo docker run -ti -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+                    -v /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd:ro \
+                    -v /tmp/$(mktemp -d):/run \
+                    -p 80:80 local/nordlayer
 #+end_src
-#+RESULTS:
-: systemd 219 running in system mode. (+PAM +AUDIT +SELINUX +IMA -APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS +ACL +XZ +LZ4 -SECCOMP +BLKID +ELFUTILS +KMOD +IDN)
-: Detected virtualization docker.
-: Detected architecture x86-64.
-: Welcome to CentOS Linux 7 (Core)!
-: Set hostname to <db37c95191a7>.
-: Initializing machine ID from random generator.
-: Cannot determine cgroup we are running in: No such file or directory
-: Failed to allocate manager object: No such file or directory
-: [!!!!!!] Failed to allocate manager object, freezing.
+systemd 219 running in system mode. (+PAM +AUDIT +SELINUX +IMA -APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS +ACL +XZ +LZ4 -SECCOMP +BLKID +ELFUTILS +KMOD +IDN)
+Detected virtualization docker.
+Detected architecture x86-64.
+Welcome to CentOS Linux 7 (Core)!
+Set hostname to <db37c95191a7>.
+Initializing machine ID from random generator.
+Cannot determine cgroup we are running in: No such file or directory
+Failed to allocate manager object: No such file or directory
+[!!!!!!] Failed to allocate manager object, freezing.
