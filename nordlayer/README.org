@@ -1,37 +1,45 @@
 #+TITLE: Nordlayer container
 
+* build and shell
 #+begin_src bash
 sudo docker build --rm -t local/nordlayer ./
 sudo docker exec -ti nordlayer /bin/bash
 #+end_src
 
+* run without mounting
 #+begin_src bash
 sudo docker run -d --name=nordlayer local/nordlayer
 #+end_src
+**  result
 runs a container, can't systemd, when privileged can't find
-
+*   run with partial mounting
 #+begin_src bash
 sudo docker run -ti -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 80:80 local/nordlayer
 #+end_src
+**  result
 Failed to mount tmpfs at /run: Operation not permitted
 
 Failed to mount cgroup at /sys/fs/cgroup/systemd: Operation not permitted
 
 [!!!!!!] Failed to mount API filesystems, freezing.
 
+*   run with everything mounted
 #+begin_src bash
 sudo docker run -ti -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
                     -v /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd:ro \
                     -v /tmp/$(mktemp -d):/run \
                     -p 80:80 local/nordlayer
 #+end_src
+**  result
 systemd 219 running in system mode. (+PAM +AUDIT +SELINUX +IMA -APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS +ACL +XZ +LZ4 -SECCOMP +BLKID +ELFUTILS +KMOD +IDN)
 
 Detected virtualization docker.
 
 Detected architecture x86-64.
 
+
 Welcome to CentOS Linux 7 (Core)!
+
 
 Set hostname to <db37c95191a7>.
 
@@ -42,3 +50,66 @@ Cannot determine cgroup we are running in: No such file or directory
 Failed to allocate manager object: No such file or directory
 
 [!!!!!!] Failed to allocate manager object, freezing.
+
+*   docker-compose
+#+begin_src bash
+sudo docker-compose up --build
+#+end_src
+**  result
+Sending build context to Docker daemon  5.931kB
+
+Step 1/8 : FROM local/c7-systemd
+
+ ---> 014883eac530
+
+Step 2/8 : WORKDIR /nordlayer
+
+ ---> Using cache
+
+ ---> 5b61db345ef3
+
+Step 3/8 : ADD . /nordlayer
+
+ ---> Using cache
+
+ ---> f9c9a171d615
+
+Step 4/8 : VOLUME ["/sys/fs/cgroup"]
+
+ ---> Using cache
+
+ ---> 73bec937bb73
+
+Step 5/8 : RUN yum -y install /nordlayer/nordlayer-latest-1.0.0-noarch.rpm;     yum -y makecache;     yum -y install nordlayer --nogpgcheck;
+
+ ---> Using cache
+
+ ---> e7b0c52742fc
+
+Step 6/8 : RUN systemctl enable nordlayer.service;     systemctl enable nordlayer.socket
+
+ ---> Using cache
+
+ ---> bd251b960089
+
+Step 7/8 : EXPOSE 80:80
+
+ ---> Using cache
+
+ ---> 439391e6491d
+
+Step 8/8 : CMD ["/usr/sbin/init"]
+
+ ---> Using cache
+
+ ---> f344c1e80c66
+
+Successfully built f344c1e80c66
+
+Successfully tagged nordlayer:latest
+
+Attaching to nordlayer-vpn-1
+
+nordlayer-vpn-1  | Couldn't find an alternative telinit implementation to spawn.
+
+nordlayer-vpn-1 exited with code 1
